@@ -1,7 +1,9 @@
 import { Card } from "@/components/Card";
 import { LiveConceptList } from "@/components/LiveConceptList";
+import { listConcepts } from "@/lib/concepts";
 
 export default function Home() {
+  const concepts = listConcepts();
   return (
     <main>
       <header className="mb-12">
@@ -21,18 +23,15 @@ export default function Home() {
       </header>
 
       <section className="grid gap-5 sm:grid-cols-2">
-        <Card
-          href="/agent-loop"
-          badge="Concept 1"
-          title="에이전트 루프"
-          description="프롬프트 → 분석 → 제안 → 권한 → 실행 → 결과의 순환 사이클을 한눈에."
-        />
-        <Card
-          href="/memory-hierarchy"
-          badge="Concept 2"
-          title="CLAUDE.md 메모리 계층"
-          description="관리 정책 / 사용자 / 프로젝트 / 로컬 4단으로 중첩되는 지침 로드 구조."
-        />
+        {concepts.map((c, i) => (
+          <Card
+            key={c.slug}
+            href={`/${c.slug}`}
+            badge={`Concept ${i + 1}`}
+            title={c.title}
+            description={c.summary}
+          />
+        ))}
       </section>
 
       <section className="mt-12">
