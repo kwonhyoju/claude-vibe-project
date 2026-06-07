@@ -1,11 +1,27 @@
 import { NextResponse } from "next/server";
+import { AppError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
+import { toErrorResponse } from "@/lib/api/error-response";
+import { addFeedback, parseFeedbackInput } from "@/lib/feedback-store";
 
 export async function POST(req: Request) {
-  // TODO(student): 학습자가 완성할 자리.
-  // 요구사항 (IDEAS.md #3):
-  // - body에서 { conceptSlug, rating, comment } 검증
-  // - 메모리 저장소(또는 파일)에 저장
-  // - 성공 시 { id, savedAt } 반환, 검증 실패 시 400 + AppError 일관 응답
-  await req.text();
-  return NextResponse.json({ stub: true, message: "not implemented" }, { status: 501 });
+  try {
+    const body = await req.json().catch(() => {
+      throw new AppError("invalid JSON body", {
+        status: 400,
+        code: "invalid_input",
+      });
+    });
+    const input = parseFeedbackInput(body);
+    const saved = addFeedback(input);
+    logger.info({
+      module: "feedback",
+      event: "created",
+      id: saved.id,
+      conceptSlug: input.conceptSlug,
+    });
+    return NextResponse.json(saved);
+  } catch (err) {
+    return toErrorResponse(err);
+  }
 }

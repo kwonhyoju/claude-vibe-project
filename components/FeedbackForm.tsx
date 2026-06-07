@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { postFeedback } from "@/lib/api/axios-client";
+import { postFeedback } from "@/lib/api/fetch-client";
 
 export function FeedbackForm({ slug }: { slug: string }) {
   const [rating, setRating] = useState(5);
@@ -56,7 +56,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
       )}
       {status === "err" && (
         <p className="text-xs text-red-400">
-          전송 실패 — /api/feedback이 아직 stub입니다. IDEAS.md #3에서 완성하세요.
+          전송 실패 — 잠시 후 다시 시도해주세요.
         </p>
       )}
     </form>
